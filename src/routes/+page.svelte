@@ -17,7 +17,13 @@
 
 <main>
 	<h1>Time Together Calculator</h1>
-
+	<section>
+		<h2>⚠️ Warning ⚠️</h2>
+		<p style="color: red;">
+			This website is currently under construction 🚧 and is not feature complete yet. Some
+			functionalities may not work as expected.
+		</p>
+	</section>
 	<section>
 		<h2>Purpose</h2>
 		<p>
