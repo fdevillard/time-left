@@ -1,3 +1,19 @@
+<script lang="ts">
+	import { browser } from '$app/environment';
+	import { State } from '$lib/state.svelte';
+	import { DateTime } from 'luxon';
+
+	let s = browser ? State.fromLocalStorage(localStorage) : new State();
+
+	$effect(() => {
+		if (browser) {
+			State.save(localStorage, s.birthDate, s.relatives, s.lifeEvents);
+		}
+	});
+
+	let birthDateIso = $derived(s.birthDate ? s.birthDate.toISODate() : null);
+</script>
+
 <main>
 	<h1>Time Together Calculator</h1>
 
@@ -22,6 +38,40 @@
 			<li>Strengthen our relationships.</li>
 			<li>Create lasting memories.</li>
 		</ul>
+	</section>
+
+	<section>
+		<h2>Tell Us about You</h2>
+		<label for="birthdate">Birthdate:</label>
+		<input
+			name="birthdate"
+			type="date"
+			max={DateTime.now().toISO()}
+			value={birthDateIso}
+			onchange={(event) => {
+				try {
+					s.birthDate = DateTime.fromISO((event.target as HTMLInputElement)?.value);
+				} catch (e) {
+					console.info('Invalid date', e);
+					s.birthDate = null;
+				}
+			}}
+		/>
+
+		<p>expectancy: {s.lifeExpectancy}</p>
+	</section>
+
+	<section>
+		<h2>Life Events</h2>
+		<p>
+			To make the results more meaningful, think about events that impacted how often you see your
+			relatives: when you moved out of your parent's place, met someone special, ended a
+			relationship, lived abroad, started a new job, or had children.
+		</p>
+		<p>
+			These turning points influence the time spent with loved ones and help provide a clearer
+			picture of your shared time.
+		</p>
 	</section>
 
 	<section>
