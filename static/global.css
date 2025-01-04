@@ -3,6 +3,7 @@
 	--color-bg: #ffffff;
 	--color-text: #000000;
 	--color-primary: #6200ee;
+	--color-text-on-primary: #ffffff;
 
 	--spacing-small: 0.5rem;
 	--spacing-medium: 1rem;
@@ -62,7 +63,7 @@ body {
 /* Buttons */
 button {
 	background-color: var(--color-primary);
-	color: var(--color-text);
+	color: var(--color-text-on-primary);
 	border: none;
 	padding: var(--spacing-small) var(--spacing-medium);
 	cursor: pointer;
