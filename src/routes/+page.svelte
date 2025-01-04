@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import LifeEventEdit from '$lib/components/LifeEventEdit.svelte';
 	import { State } from '$lib/state.svelte';
 	import { DateTime } from 'luxon';
 
@@ -72,6 +73,11 @@
 			These turning points influence the time spent with loved ones and help provide a clearer
 			picture of your shared time.
 		</p>
+		<LifeEventEdit
+			lifeEvents={s.lifeEvents}
+			onEventChanged={(event) => s.updateLifeEvent(event)}
+			onEventDeleted={(id) => s.deleteLifeEvent(id)}
+		/>
 	</section>
 
 	<section>

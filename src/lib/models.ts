@@ -10,6 +10,5 @@ export type LifeEvent = {
 	id: string;
 	title: string;
 	date: DateTime;
-	description: string;
 	color: string;
 };

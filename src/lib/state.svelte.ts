@@ -3,6 +3,9 @@ import type { LifeEvent, Person } from './models';
 
 type LocalStorage = WindowLocalStorage['localStorage'];
 
+type SerializedPerson = Omit<Person, 'birthDate'> & { birthDate: string };
+type SerializedLifeEvent = Omit<LifeEvent, 'date'> & { date: string };
+
 export class State {
 	birthDate: DateTime | null = $state(null);
 	relatives: Person[] = $state([]);
@@ -30,6 +33,19 @@ export class State {
 		}
 	}
 
+	updateLifeEvent(lifeEvent: LifeEvent) {
+		const index = this.lifeEvents.findIndex((e) => e.id === lifeEvent.id);
+		if (index !== -1) {
+			this.lifeEvents[index] = lifeEvent;
+		} else {
+			this.lifeEvents.push(lifeEvent);
+		}
+	}
+
+	deleteLifeEvent(id: string) {
+		this.lifeEvents = this.lifeEvents.filter((e) => e.id !== id);
+	}
+
 	static fromLocalStorage(localStorage: LocalStorage): State {
 		const state = localStorage.getItem('state');
 		if (!state) {
@@ -37,7 +53,15 @@ export class State {
 		}
 
 		const { birthDate, relatives, lifeEvents } = JSON.parse(state);
-		return new State(birthDate ? DateTime.fromISO(birthDate) : null, relatives, lifeEvents);
+		const birthDateParsed = birthDate ? DateTime.fromISO(birthDate) : null;
+		const relativesParsed = relatives
+			? relatives.map((r: SerializedPerson) => ({ ...r, birthDate: DateTime.fromISO(r.birthDate) }))
+			: [];
+		const lifeEventsParsed = lifeEvents
+			? lifeEvents.map((e: SerializedLifeEvent) => ({ ...e, date: DateTime.fromISO(e.date) }))
+			: [];
+
+		return new State(birthDateParsed, relativesParsed, lifeEventsParsed);
 	}
 
 	static save(
