@@ -30,6 +30,10 @@
 			This tool is meant for <strong>reflective purposes only</strong>. All calculations are based
 			on estimates and averages and are not a prediction of actual life expectancy or circumstances.
 		</p>
+		<p class="disclaimer">
+			<strong>Data Privacy:</strong> Your data is stored locally in your browser and is never sent to
+			any remote servers. This ensures your personal information remains private and secure.
+		</p>
 	</section>
 
 	<section>
