@@ -46,6 +46,19 @@ export class State {
 		this.lifeEvents = this.lifeEvents.filter((e) => e.id !== id);
 	}
 
+	updateRelative(relative: Person) {
+		const index = this.relatives.findIndex((r) => r.id === relative.id);
+		if (index !== -1) {
+			this.relatives[index] = relative;
+		} else {
+			this.relatives.push(relative);
+		}
+	}
+
+	deleteRelative(id: string) {
+		this.relatives = this.relatives.filter((r) => r.id !== id);
+	}
+
 	static fromLocalStorage(localStorage: LocalStorage): State {
 		const state = localStorage.getItem('state');
 		if (!state) {

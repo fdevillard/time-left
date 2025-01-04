@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import ImportantPeopleEdit from '$lib/components/ImportantPeopleEdit.svelte';
 	import LifeEventEdit from '$lib/components/LifeEventEdit.svelte';
 	import { State } from '$lib/state.svelte';
 	import { DateTime } from 'luxon';
@@ -83,6 +84,19 @@
 			lifeEvents={s.lifeEvents}
 			onEventChanged={(event) => s.updateLifeEvent(event)}
 			onEventDeleted={(id) => s.deleteLifeEvent(id)}
+		/>
+	</section>
+
+	<section>
+		<h2>Important People</h2>
+		<p>
+			Tell us about the people who matter most to you. This could include your immediate family,
+			extended relatives, close friends, or anyone who plays an important role in your life.
+		</p>
+		<ImportantPeopleEdit
+			people={s.relatives}
+			onPersonChanged={(p) => s.updateRelative(p)}
+			onPersonDeleted={(id) => s.deleteRelative(id)}
 		/>
 	</section>
 
