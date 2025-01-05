@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
-import type { Frequencies, Frequency, LifeEvent, Person } from './models';
+import type { Frequencies, Frequency, LifeEvent, Person, Result } from './models';
+import { getFrequency, getWeekState } from './utils';
 
 type LocalStorage = WindowLocalStorage['localStorage'];
 
@@ -20,6 +21,43 @@ export class State {
 
 		const age = Math.round(Math.abs(birthDate.diffNow('years').years));
 		return Math.max(85, age + 5);
+	});
+
+	expectedDeath: DateTime = $derived.by(() => {
+		const birthDate = this.birthDate;
+		if (!birthDate) {
+			return DateTime.now();
+		}
+
+		return birthDate.plus({ years: this.lifeExpectancy });
+	});
+
+	eventsWithDeath: LifeEvent[] = $derived.by(() => {
+		const birthDate = this.birthDate || DateTime.utc(0, 0, 0);
+		const validEvents = this.lifeEvents.filter(
+			(event) => event.date >= birthDate && event.date <= this.expectedDeath
+		);
+		const sorted = validEvents.sort((a, b) => a.date.toMillis() - b.date.toMillis());
+		return [...sorted, { id: 'death', title: 'Death', date: this.expectedDeath, color: '#000000' }];
+	});
+
+	results: Result[] = $derived.by(() => {
+		const results: Result[] = [];
+		const now = DateTime.now();
+		this.relatives.forEach((relative) => {
+			const person = relative;
+			let timeSpent = 0;
+			let timeRemaining = 0;
+			this.eventsWithDeath.forEach((event) => {
+				const { passedWeeks, remainingWeeks } = getWeekState(now, event.date, this.expectedDeath);
+				const frequency = getFrequency(this.frequencies, person.id, event.id);
+				timeSpent += passedWeeks * frequency;
+				timeRemaining += remainingWeeks * frequency;
+			});
+			const consumedRatio = timeSpent / (timeSpent + timeRemaining);
+			results.push({ person, consumedRatio });
+		});
+		return results;
 	});
 
 	constructor(

@@ -3,6 +3,7 @@
 	import FrequenciesEdit from '$lib/components/FrequenciesEdit.svelte';
 	import ImportantPeopleEdit from '$lib/components/ImportantPeopleEdit.svelte';
 	import LifeEventEdit from '$lib/components/LifeEventEdit.svelte';
+	import Result from '$lib/components/Result.svelte';
 	import { State } from '$lib/state.svelte';
 	import { DateTime } from 'luxon';
 
@@ -105,12 +106,21 @@
 		<h2>Weekly frequency</h2>
 		<p>Think of how often you see someone on a weekly basis during the specific period</p>
 		<FrequenciesEdit
-			lifeEvents={s.lifeEvents}
+			lifeEventsWithDeath={s.eventsWithDeath}
 			people={s.relatives}
 			frequencies={s.frequencies}
 			onFrequencyUpdate={(updated) => s.updateFrequency(updated)}
 		/>
 	</secion>
+
+	<section>
+		<h2>Results</h2>
+		<p>
+			Based on the information you provided, here is an estimate of the time you have left with your
+			loved ones:
+		</p>
+		<Result results={s.results} />
+	</section>
 
 	<section>
 		<h2>Disclaimer</h2>

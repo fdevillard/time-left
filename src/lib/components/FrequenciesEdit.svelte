@@ -1,17 +1,16 @@
 <script lang="ts">
 	import type { Frequency, LifeEvent, Person } from '$lib/models';
 	import { getFrequency } from '$lib/utils';
-	import { DateTime } from 'luxon';
 
 	type Props = {
-		lifeEvents: LifeEvent[];
+		lifeEventsWithDeath: LifeEvent[];
 		people: Person[];
 		frequencies: Frequency[];
 
 		onFrequencyUpdate: (updated: Frequency) => void;
 	};
 
-	let { lifeEvents, people, frequencies, onFrequencyUpdate }: Props = $props();
+	let { lifeEventsWithDeath, people, frequencies, onFrequencyUpdate }: Props = $props();
 
 	function createInputCallback(person: Person, event: LifeEvent): (e: Event) => void {
 		return (e: Event) => {
@@ -27,23 +26,15 @@
 			}
 		};
 	}
-
-	let deathFrequency: LifeEvent = {
-		id: 'death',
-		title: 'Your death',
-		date: DateTime.local(9999, 12, 31),
-		color: '#000000'
-	};
 </script>
 
 <table>
 	<thead>
 		<tr>
 			<th>Person</th>
-			{#each lifeEvents as event}
-				<th>{event.title}</th>
+			{#each lifeEventsWithDeath as event}
+				<th>Before {event.title}</th>
 			{/each}
-			<th>{deathFrequency.title}</th>
 		</tr>
 	</thead>
 
@@ -62,10 +53,9 @@
 		{#each people as person}
 			<tr>
 				<th>{person.name}</th>
-				{#each lifeEvents as lifeEvent}
+				{#each lifeEventsWithDeath as lifeEvent}
 					{@render frequencyItem(person, lifeEvent)}
 				{/each}
-				{@render frequencyItem(person, deathFrequency)}
 			</tr>
 		{/each}
 	</tbody>

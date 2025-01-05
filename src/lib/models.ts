@@ -22,3 +22,8 @@ export type Frequency = {
 };
 
 export type Frequencies = Frequency[];
+
+export type Result = {
+	person: Person;
+	consumedRatio: number;
+};
