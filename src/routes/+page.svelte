@@ -60,65 +60,74 @@
 			value={birthDateIso}
 			onchange={(event) => {
 				try {
-					s.birthDate = DateTime.fromISO((event.target as HTMLInputElement)?.value);
+					const value = (event.target as HTMLInputElement)?.value;
+					s.birthDate = value ? DateTime.fromISO(value) : null;
 				} catch (e) {
 					console.info('Invalid date', e);
 					s.birthDate = null;
 				}
 			}}
 		/>
+
+		{#if s.birthDate}
+			<p>We will assume that you will live until the year {s.expectedDeath.year}.</p>
+		{:else}
+			<p>Please enter your birthdate to continue.</p>
+		{/if}
 	</section>
 
-	<section>
-		<h2>Life Events</h2>
-		<p>
-			To make the results more meaningful, think about events that impacted how often you see your
-			relatives: when you moved out of your parent's place, met someone special, ended a
-			relationship, lived abroad, started a new job, or had children.
-		</p>
-		<p>
-			These turning points influence the time spent with loved ones and help provide a clearer
-			picture of your shared time.
-		</p>
-		<LifeEventEdit
-			lifeEvents={s.lifeEvents}
-			onEventChanged={(event) => s.updateLifeEvent(event)}
-			onEventDeleted={(id) => s.deleteLifeEvent(id)}
-		/>
-	</section>
+	{#if s.birthDate}
+		<section>
+			<h2>Life Events</h2>
+			<p>
+				To make the results more meaningful, think about events that impacted how often you see your
+				relatives: when you moved out of your parent's place, met someone special, ended a
+				relationship, lived abroad, started a new job, or had children.
+			</p>
+			<p>
+				These turning points influence the time spent with loved ones and help provide a clearer
+				picture of your shared time.
+			</p>
+			<LifeEventEdit
+				lifeEvents={s.lifeEvents}
+				onEventChanged={(event) => s.updateLifeEvent(event)}
+				onEventDeleted={(id) => s.deleteLifeEvent(id)}
+			/>
+		</section>
 
-	<section>
-		<h2>Important People</h2>
-		<p>
-			Tell us about the people who matter most to you. This could include your immediate family,
-			extended relatives, close friends, or anyone who plays an important role in your life.
-		</p>
-		<ImportantPeopleEdit
-			people={s.relatives}
-			onPersonChanged={(p) => s.updateRelative(p)}
-			onPersonDeleted={(id) => s.deleteRelative(id)}
-		/>
-	</section>
+		<section>
+			<h2>Important People</h2>
+			<p>
+				Tell us about the people who matter most to you. This could include your immediate family,
+				extended relatives, close friends, or anyone who plays an important role in your life.
+			</p>
+			<ImportantPeopleEdit
+				people={s.relatives}
+				onPersonChanged={(p) => s.updateRelative(p)}
+				onPersonDeleted={(id) => s.deleteRelative(id)}
+			/>
+		</section>
 
-	<secion>
-		<h2>Weekly frequency</h2>
-		<p>Think of how often you see someone on a weekly basis during the specific period</p>
-		<FrequenciesEdit
-			lifeEventsWithDeath={s.eventsWithDeath}
-			people={s.relatives}
-			frequencies={s.frequencies}
-			onFrequencyUpdate={(updated) => s.updateFrequency(updated)}
-		/>
-	</secion>
+		<secion>
+			<h2>Weekly frequency</h2>
+			<p>Think of how often you see someone on a weekly basis during the specific period</p>
+			<FrequenciesEdit
+				lifeEventsWithDeath={s.eventsWithDeath}
+				people={s.relatives}
+				frequencies={s.frequencies}
+				onFrequencyUpdate={(updated) => s.updateFrequency(updated)}
+			/>
+		</secion>
 
-	<section>
-		<h2>Results</h2>
-		<p>
-			Based on the information you provided, here is an estimate of the time you have left with your
-			loved ones:
-		</p>
-		<Result results={s.results} />
-	</section>
+		<section>
+			<h2>Results</h2>
+			<p>
+				Based on the information you provided, here is an estimate of the time you have left with
+				your loved ones:
+			</p>
+			<Result results={s.results} />
+		</section>
+	{/if}
 
 	<section>
 		<h2>Disclaimer</h2>
