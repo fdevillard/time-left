@@ -51,7 +51,11 @@ export class State {
 			let timeSpent = 0;
 			let timeRemaining = 0;
 			this.eventsWithDeath.forEach((event, i) => {
-				const start = i === 0 ? person.birthDate : this.eventsWithDeath[i - 1].date;
+				const birth = this.birthDate;
+				if (!birth) {
+					throw new Error('Birth date is required');
+				}
+				const start = i === 0 ? birth : this.eventsWithDeath[i - 1].date;
 				const end = event.date < expectedPersonDeath ? event.date : expectedPersonDeath;
 				const { passedWeeks, remainingWeeks } = getWeekState(now, start, end);
 				const frequency = getFrequency(this.frequencies, person.id, event.id);

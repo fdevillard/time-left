@@ -36,4 +36,29 @@ describe('state', () => {
 		// Assert
 		expect(result).toEqual([{ person: s.relatives[0], consumedRatio: 0 }]);
 	});
+
+	it('compute correctly the case where people start living together', () => {
+		const now = DateTime.utc(2020, 1, 1);
+		const s = new State(
+			DateTime.utc(1980, 1, 1),
+			[{ id: 'related', name: 'any', birthDate: DateTime.utc(1980, 1, 1) }],
+			[{ id: 'moving-in', title: 'moving in', date: DateTime.utc(2019, 1, 1), color: 'red' }],
+			[{ personId: 'related', beforeEventKey: 'death', frequency: 7 }]
+		);
+		s.now = now;
+
+		// Act
+		const result = s.results;
+
+		const remainingYears = 1980 + 85 - 2020;
+		const expectedConsumedRatio = (2020 - 2019) / remainingYears;
+
+		// Assert
+		expect(result).toHaveLength(1);
+		const person = result[0].person;
+		const consumedRatio = result[0].consumedRatio;
+
+		expect(person.id).toEqual('related');
+		expect(consumedRatio).toBeCloseTo(expectedConsumedRatio);
+	});
 });

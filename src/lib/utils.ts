@@ -9,16 +9,8 @@ export function getFrequency(
 	const frequency = frequencies.find(
 		(f) => f.personId === personId && f.beforeEventKey === lifeEventId
 	);
-	if (frequency) {
-		return frequency.frequency;
-	}
 
-	const lastestForUser = frequencies.findLast((f) => f.personId === personId);
-	if (lastestForUser) {
-		return lastestForUser.frequency;
-	}
-
-	return 0;
+	return frequency?.frequency || 0;
 }
 
 export type WeekStat = {
