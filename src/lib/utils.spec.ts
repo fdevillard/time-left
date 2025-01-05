@@ -41,4 +41,17 @@ describe('getWeekState', () => {
 		// Assert
 		expect(result).toEqual({ passedWeeks: 25, remainingWeeks: 27 });
 	});
+
+	it('should return 0 if startPeriod is greater than endPeriod', () => {
+		// Arrange
+		const now = DateTime.fromISO('2021-07-01');
+		const startPeriod = DateTime.fromISO('2021-12-31');
+		const endPeriod = DateTime.fromISO('2021-01-01');
+
+		// Act
+		const result = getWeekState(now, startPeriod, endPeriod);
+
+		// Assert
+		expect(result).toEqual({ passedWeeks: 0, remainingWeeks: 0 });
+	});
 });

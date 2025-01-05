@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 import type { Frequencies, Frequency, LifeEvent, Person, Result } from './models';
-import { getFrequency, getWeekState } from './utils';
+import { getFrequency, getWeekState, personExpectedDeath } from './utils';
 
 type LocalStorage = WindowLocalStorage['localStorage'];
 
@@ -8,6 +8,7 @@ type SerializedPerson = Omit<Person, 'birthDate'> & { birthDate: string };
 type SerializedLifeEvent = Omit<LifeEvent, 'date'> & { date: string };
 
 export class State {
+	now: DateTime = $state(DateTime.now());
 	birthDate: DateTime | null = $state(null);
 	relatives: Person[] = $state([]);
 	lifeEvents: LifeEvent[] = $state([]);
@@ -19,14 +20,14 @@ export class State {
 			return 85;
 		}
 
-		const age = Math.round(Math.abs(birthDate.diffNow('years').years));
+		const age = Math.round(Math.abs(birthDate.diff(this.now, 'years').years));
 		return Math.max(85, age + 5);
 	});
 
 	expectedDeath: DateTime = $derived.by(() => {
 		const birthDate = this.birthDate;
 		if (!birthDate) {
-			return DateTime.now();
+			return this.now;
 		}
 
 		return birthDate.plus({ years: this.lifeExpectancy });
@@ -43,18 +44,22 @@ export class State {
 
 	results: Result[] = $derived.by(() => {
 		const results: Result[] = [];
-		const now = DateTime.now();
+		const now = this.now;
 		this.relatives.forEach((relative) => {
 			const person = relative;
+			const expectedPersonDeath = personExpectedDeath(person);
 			let timeSpent = 0;
 			let timeRemaining = 0;
-			this.eventsWithDeath.forEach((event) => {
-				const { passedWeeks, remainingWeeks } = getWeekState(now, event.date, this.expectedDeath);
+			this.eventsWithDeath.forEach((event, i) => {
+				const start = i === 0 ? person.birthDate : this.eventsWithDeath[i - 1].date;
+				const end = event.date < expectedPersonDeath ? event.date : expectedPersonDeath;
+				const { passedWeeks, remainingWeeks } = getWeekState(now, start, end);
 				const frequency = getFrequency(this.frequencies, person.id, event.id);
 				timeSpent += passedWeeks * frequency;
 				timeRemaining += remainingWeeks * frequency;
 			});
-			const consumedRatio = timeSpent / (timeSpent + timeRemaining);
+			const denominator = timeSpent + timeRemaining;
+			const consumedRatio = denominator ? timeSpent / denominator : 0;
 			results.push({ person, consumedRatio });
 		});
 		return results;

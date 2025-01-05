@@ -28,7 +28,7 @@ export type WeekStat = {
 
 export function getWeekState(now: DateTime, startPeriod: DateTime, endPeriod: DateTime): WeekStat {
 	if (startPeriod > endPeriod) {
-		throw new Error('startPeriod should be less than endPeriod');
+		return { passedWeeks: 0, remainingWeeks: 0 };
 	}
 
 	const periodLength = Math.floor(endPeriod.diff(startPeriod, 'weeks').weeks);
@@ -41,4 +41,10 @@ export function getWeekState(now: DateTime, startPeriod: DateTime, endPeriod: Da
 	const passedWeeks = Math.floor(now.diff(startPeriod, 'weeks').weeks);
 	const remainingWeeks = Math.ceil(endPeriod.diff(now, 'weeks').weeks);
 	return { passedWeeks, remainingWeeks };
+}
+
+export function personExpectedDeath(person: Person): DateTime {
+	const age = Math.ceil(person.birthDate.diffNow('years').years);
+	const lifeExpectancy = Math.max(85, age + 5);
+	return person.birthDate.plus({ years: lifeExpectancy });
 }
