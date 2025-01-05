@@ -12,3 +12,13 @@ export type LifeEvent = {
 	date: DateTime;
 	color: string;
 };
+
+export type BeforeEventKey = LifeEvent['id'] | 'death';
+
+export type Frequency = {
+	personId: Person['id'];
+	beforeEventKey: BeforeEventKey;
+	frequency: number;
+};
+
+export type Frequencies = Frequency[];

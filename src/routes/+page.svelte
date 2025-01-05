@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import FrequenciesEdit from '$lib/components/FrequenciesEdit.svelte';
 	import ImportantPeopleEdit from '$lib/components/ImportantPeopleEdit.svelte';
 	import LifeEventEdit from '$lib/components/LifeEventEdit.svelte';
 	import { State } from '$lib/state.svelte';
@@ -9,7 +10,7 @@
 
 	$effect(() => {
 		if (browser) {
-			State.save(localStorage, s.birthDate, s.relatives, s.lifeEvents);
+			State.save(localStorage, s.birthDate, s.relatives, s.lifeEvents, s.frequencies);
 		}
 	});
 
@@ -99,6 +100,17 @@
 			onPersonDeleted={(id) => s.deleteRelative(id)}
 		/>
 	</section>
+
+	<secion>
+		<h2>Weekly frequency</h2>
+		<p>Think of how often you see someone on a weekly basis during the specific period</p>
+		<FrequenciesEdit
+			lifeEvents={s.lifeEvents}
+			people={s.relatives}
+			frequencies={s.frequencies}
+			onFrequencyUpdate={(updated) => s.updateFrequency(updated)}
+		/>
+	</secion>
 
 	<section>
 		<h2>Disclaimer</h2>

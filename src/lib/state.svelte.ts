@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import type { LifeEvent, Person } from './models';
+import type { Frequencies, Frequency, LifeEvent, Person } from './models';
 
 type LocalStorage = WindowLocalStorage['localStorage'];
 
@@ -10,6 +10,7 @@ export class State {
 	birthDate: DateTime | null = $state(null);
 	relatives: Person[] = $state([]);
 	lifeEvents: LifeEvent[] = $state([]);
+	frequencies: Frequencies = $state([]);
 
 	lifeExpectancy: number = $derived.by(() => {
 		const birthDate = this.birthDate;
@@ -21,7 +22,12 @@ export class State {
 		return Math.max(85, age + 5);
 	});
 
-	constructor(birthDate?: DateTime | null, relatives?: Person[], lifeEvents?: LifeEvent[]) {
+	constructor(
+		birthDate?: DateTime | null,
+		relatives?: Person[],
+		lifeEvents?: LifeEvent[],
+		frequencies?: Frequencies
+	) {
 		if (birthDate) {
 			this.birthDate = birthDate;
 		}
@@ -30,6 +36,9 @@ export class State {
 		}
 		if (lifeEvents) {
 			this.lifeEvents = lifeEvents;
+		}
+		if (frequencies) {
+			this.frequencies = frequencies;
 		}
 	}
 
@@ -59,13 +68,32 @@ export class State {
 		this.relatives = this.relatives.filter((r) => r.id !== id);
 	}
 
+	updateFrequency(frequency: Frequency) {
+		const shouldDelete = frequency.frequency === 0;
+		const index = this.frequencies.findIndex(
+			(f) => f.personId === frequency.personId && f.beforeEventKey === frequency.beforeEventKey
+		);
+		if (index !== -1) {
+			if (shouldDelete) {
+				this.frequencies.splice(index, 1);
+			} else {
+				this.frequencies[index] = frequency;
+			}
+			this.frequencies[index] = frequency;
+		} else {
+			if (!shouldDelete) {
+				this.frequencies.push(frequency);
+			}
+		}
+	}
+
 	static fromLocalStorage(localStorage: LocalStorage): State {
 		const state = localStorage.getItem('state');
 		if (!state) {
 			return new State();
 		}
 
-		const { birthDate, relatives, lifeEvents } = JSON.parse(state);
+		const { birthDate, relatives, lifeEvents, frequencies } = JSON.parse(state);
 		const birthDateParsed = birthDate ? DateTime.fromISO(birthDate) : null;
 		const relativesParsed = relatives
 			? relatives.map((r: SerializedPerson) => ({ ...r, birthDate: DateTime.fromISO(r.birthDate) }))
@@ -74,16 +102,19 @@ export class State {
 			? lifeEvents.map((e: SerializedLifeEvent) => ({ ...e, date: DateTime.fromISO(e.date) }))
 			: [];
 
-		return new State(birthDateParsed, relativesParsed, lifeEventsParsed);
+		const parsedFrequencies: Frequencies = frequencies || [];
+
+		return new State(birthDateParsed, relativesParsed, lifeEventsParsed, parsedFrequencies);
 	}
 
 	static save(
 		localStorage: LocalStorage,
 		birthDate: DateTime | null,
 		relatives: Person[],
-		lifeEvents: LifeEvent[]
+		lifeEvents: LifeEvent[],
+		frequencies: Frequencies
 	) {
-		const state = { birthDate, relatives, lifeEvents };
+		const state = { birthDate, relatives, lifeEvents, frequencies };
 		localStorage.setItem('state', JSON.stringify(state));
 	}
 }
