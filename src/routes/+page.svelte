@@ -67,8 +67,6 @@
 				}
 			}}
 		/>
-
-		<p>expectancy: {s.lifeExpectancy}</p>
 	</section>
 
 	<section>
