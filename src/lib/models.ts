@@ -27,3 +27,17 @@ export type Result = {
 	person: Person;
 	consumedRatio: number;
 };
+export type GridEvent = {
+	event: 'user_born' | 'user_death' | 'life_event';
+};
+
+export type Cell = {
+	context: 'user-alive' | 'user-not-alive';
+	events: GridEvent[];
+};
+
+export type Grid = {
+	cells: Cell[][];
+	width: number;
+	height: number;
+};

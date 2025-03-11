@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import FrequenciesEdit from '$lib/components/FrequenciesEdit.svelte';
+	import GridResult from '$lib/components/GridResult.svelte';
 	import ImportantPeopleEdit from '$lib/components/ImportantPeopleEdit.svelte';
 	import LifeEventEdit from '$lib/components/LifeEventEdit.svelte';
 	import Result from '$lib/components/Result.svelte';
@@ -126,6 +127,9 @@
 				your loved ones:
 			</p>
 			<Result results={s.results} />
+
+			<h3>As grid:</h3>
+			<GridResult grid={s.resultsAsGrid} />
 		</section>
 	{/if}
 

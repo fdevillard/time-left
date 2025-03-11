@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 import { describe, it, expect } from 'vitest';
 import { State } from './state.svelte';
+import { LIFE_EXPECTANCY } from './utils';
 
 describe('state', () => {
 	it('a relative dying during lifetime should only be counted until death', () => {
@@ -50,7 +51,7 @@ describe('state', () => {
 		// Act
 		const result = s.results;
 
-		const remainingYears = 1980 + 85 - 2020;
+		const remainingYears = 1980 + LIFE_EXPECTANCY - 2020;
 		const expectedConsumedRatio = (2020 - 2019) / remainingYears;
 
 		// Assert
@@ -60,5 +61,35 @@ describe('state', () => {
 
 		expect(person.id).toEqual('related');
 		expect(consumedRatio).toBeCloseTo(expectedConsumedRatio);
+	});
+
+	it('compute the grid correctly', () => {
+		const now = DateTime.utc(2020, 1, 1);
+		const moveInDate = DateTime.utc(2019, 1, 1);
+		const s = new State(
+			DateTime.utc(1980, 2, 1),
+			[{ id: 'related', name: 'any', birthDate: DateTime.utc(1980, 1, 1) }],
+			[{ id: 'moving-in', title: 'moving in', date: moveInDate, color: 'red' }],
+			[{ personId: 'related', beforeEventKey: 'death', frequency: 7 }]
+		);
+		s.now = now;
+
+		// Act
+		const grid = s.resultsAsGrid;
+
+		// Assert
+		const width = 52;
+		const height = LIFE_EXPECTANCY + 1;
+		expect(grid.height).toEqual(height);
+		for (const row of grid.cells) {
+			expect(row).toHaveLength(width);
+		}
+
+		expect(grid.cells[0][4]).toEqual({ events: [{ event: 'user_born' }], context: 'user-alive' });
+		expect(grid.cells[39][0]).toEqual({ events: [{ event: 'life_event' }], context: 'user-alive' });
+		expect(grid.cells[LIFE_EXPECTANCY][4]).toEqual({
+			events: [{ event: 'user_death' }],
+			context: 'user-not-alive'
+		});
 	});
 });
