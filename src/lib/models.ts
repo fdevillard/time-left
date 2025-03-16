@@ -1,43 +1,43 @@
-import { DateTime } from 'luxon';
+import { DateTime } from "luxon";
 
 export type Person = {
-	id: string;
-	name: string;
-	birthDate: DateTime;
+    id: string;
+    name: string;
+    birthDate: DateTime;
 };
 
 export type LifeEvent = {
-	id: string;
-	title: string;
-	date: DateTime;
-	color: string;
+    id: string;
+    title: string;
+    date: DateTime;
+    color: string;
 };
 
-export type BeforeEventKey = LifeEvent['id'] | 'death';
+export type BeforeEventKey = LifeEvent["id"] | "death";
 
 export type Frequency = {
-	personId: Person['id'];
-	beforeEventKey: BeforeEventKey;
-	frequency: number;
+    personId: Person["id"];
+    beforeEventKey: BeforeEventKey;
+    frequency: number;
 };
 
 export type Frequencies = Frequency[];
 
 export type Result = {
-	person: Person;
-	consumedRatio: number;
+    person: Person;
+    consumedRatio: number;
 };
 export type GridEvent = {
-	event: 'user_born' | 'user_death' | 'life_event';
+    event: "user_born" | "user_death" | "life_event";
 };
 
 export type Cell = {
-	context: 'user-alive' | 'user-not-alive';
-	events: GridEvent[];
+    context: "user-alive" | "user-not-alive";
+    events: GridEvent[];
 };
 
 export type Grid = {
-	cells: Cell[][];
-	width: number;
-	height: number;
+    cells: Cell[][];
+    width: number;
+    height: number;
 };

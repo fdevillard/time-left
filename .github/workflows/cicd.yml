@@ -1,74 +1,74 @@
 name: CI/CD
 
 on:
-  pull_request:
-  push:
-    branches:
-      - main
+    pull_request:
+    push:
+        branches:
+            - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '23'
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "23"
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+            - name: Install pnpm
+              run: npm install -g pnpm
 
-      - name: Install dependencies
-        run: pnpm install
+            - name: Install dependencies
+              run: pnpm install
 
-      - name: Run build
-        run: pnpm run build
+            - name: Run build
+              run: pnpm run build
 
-      - name: Run checks
-        run: pnpm run check
+            - name: Run checks
+              run: pnpm run check
 
-      - name: Run tests
-        run: pnpm run test
+            - name: Run tests
+              run: pnpm run test
 
-  deploy:
-    if: github.ref == 'refs/heads/main'
-    needs: build
+    deploy:
+        if: github.ref == 'refs/heads/main'
+        needs: build
 
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            pages: write
+            id-token: write
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '23'
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "23"
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+            - name: Install pnpm
+              run: npm install -g pnpm
 
-      - name: Install dependencies
-        run: pnpm install
+            - name: Install dependencies
+              run: pnpm install
 
-      - name: Build project
-        env:
-          BASE_PATH: '/${{ github.event.repository.name }}'
-        run: pnpm run build
+            - name: Build project
+              env:
+                  BASE_PATH: "/${{ github.event.repository.name }}"
+              run: pnpm run build
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './build'
+            - name: Upload artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: "./build"
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4
