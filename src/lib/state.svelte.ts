@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
-import type { Frequencies, Frequency, LifeEvent, Person, Result } from './models';
-import { getFrequency, getWeekState, personExpectedDeath } from './utils';
+import type { Cell, Frequencies, Frequency, Grid, LifeEvent, Person, Result } from './models';
+import { getFrequency, getWeekState, LIFE_EXPECTANCY, personExpectedDeath } from './utils';
 
 type LocalStorage = WindowLocalStorage['localStorage'];
 
@@ -17,11 +17,11 @@ export class State {
 	lifeExpectancy: number = $derived.by(() => {
 		const birthDate = this.birthDate;
 		if (!birthDate) {
-			return 85;
+			return LIFE_EXPECTANCY;
 		}
 
 		const age = Math.round(Math.abs(birthDate.diff(this.now, 'years').years));
-		return Math.max(85, age + 5);
+		return Math.max(LIFE_EXPECTANCY, age + 5);
 	});
 
 	expectedDeath: DateTime = $derived.by(() => {
@@ -67,6 +67,69 @@ export class State {
 			results.push({ person, consumedRatio });
 		});
 		return results;
+	});
+
+	resultsAsGrid: Grid = $derived.by(() => {
+		const width = 52;
+		const birthWeek = (this.birthDate?.weekNumber || 1) - 1;
+		const deathWeek = (this.expectedDeath?.weekNumber || 1) - 1;
+		const cells: Grid['cells'] = [];
+		let isUserAlive = false;
+
+		// process life events
+		type EventWithYearWeek = {
+			year: number;
+			week: number;
+			event: LifeEvent;
+		};
+		const eventsWithYearWeek: EventWithYearWeek[] = [];
+		this.lifeEvents.forEach((event) => {
+			if (
+				this.birthDate &&
+				this.birthDate <= event.date &&
+				this.expectedDeath &&
+				event.date <= this.expectedDeath
+			) {
+				const year = event.date.year - this.birthDate.year;
+				const week = event.date.weekNumber - 1;
+				eventsWithYearWeek.push({ year, week, event });
+			}
+		});
+		console.log(eventsWithYearWeek);
+
+		// aggregate everything in grid format
+		for (let y = 0; y < LIFE_EXPECTANCY + 1; y++) {
+			const row: Cell[] = [];
+			for (let x = 0; x < width; x++) {
+				const cellEvents: Cell['events'] = [];
+				if (y === 0 && x === birthWeek) {
+					cellEvents.push({ event: 'user_born' });
+					isUserAlive = true;
+				}
+				if (y === LIFE_EXPECTANCY && x === deathWeek) {
+					cellEvents.push({ event: 'user_death' });
+					isUserAlive = false;
+				}
+				eventsWithYearWeek.forEach((eventWithYearWeek) => {
+					if (eventWithYearWeek.year === y && eventWithYearWeek.week === x) {
+						cellEvents.push({ event: 'life_event' });
+					}
+				});
+				row.push({
+					context: isUserAlive ? 'user-alive' : 'user-not-alive',
+					events: cellEvents
+				});
+			}
+			cells.push(row);
+		}
+
+		console.log(cells);
+
+		return {
+			cells,
+			width,
+			height: cells.length
+		};
 	});
 
 	constructor(

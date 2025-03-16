@@ -1,6 +1,8 @@
 import type { DateTime } from 'luxon';
 import type { Frequencies, Frequency, LifeEvent, Person } from './models';
 
+export const LIFE_EXPECTANCY = 85;
+
 export function getFrequency(
 	frequencies: Frequencies,
 	personId: Person['id'],
@@ -37,6 +39,6 @@ export function getWeekState(now: DateTime, startPeriod: DateTime, endPeriod: Da
 
 export function personExpectedDeath(person: Person): DateTime {
 	const age = Math.ceil(person.birthDate.diffNow('years').years);
-	const lifeExpectancy = Math.max(85, age + 5);
+	const lifeExpectancy = Math.max(LIFE_EXPECTANCY, age + 5);
 	return person.birthDate.plus({ years: lifeExpectancy });
 }
