@@ -85,17 +85,11 @@ describe("state", () => {
             expect(row).toHaveLength(width);
         }
 
-        expect(grid.cells[0][4]).toEqual({
-            events: [{ event: "user_born" }],
-            context: "user-alive"
-        });
-        expect(grid.cells[39][0]).toEqual({
-            events: [{ event: "life_event" }],
-            context: "user-alive"
-        });
-        expect(grid.cells[LIFE_EXPECTANCY][4]).toEqual({
-            events: [{ event: "user_death" }],
-            context: "user-not-alive"
-        });
+        expect(grid.cells[0][4].events).toEqual([{ event: "user_born" }]);
+        expect(grid.cells[0][4].context).toEqual("user-alive");
+        expect(grid.cells[39][0].events).toEqual([{ event: "life_event" }]);
+        expect(grid.cells[39][0].context).toEqual("user-alive");
+        expect(grid.cells[LIFE_EXPECTANCY][4].events).toEqual([{ event: "user_death" }]);
+        expect(grid.cells[LIFE_EXPECTANCY][4].context).toEqual("user-not-alive");
     });
 });

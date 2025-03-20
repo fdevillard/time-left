@@ -120,13 +120,13 @@ export class State {
                 });
                 row.push({
                     context: isUserAlive ? "user-alive" : "user-not-alive",
-                    events: cellEvents
+                    events: cellEvents,
+                    duringUserYear: y,
+                    week: x + 1
                 });
             }
             cells.push(row);
         }
-
-        console.log(cells);
 
         return {
             cells,

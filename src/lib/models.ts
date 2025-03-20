@@ -34,6 +34,8 @@ export type GridEvent = {
 export type Cell = {
     context: "user-alive" | "user-not-alive";
     events: GridEvent[];
+    duringUserYear: number;
+    week: number;
 };
 
 export type Grid = {

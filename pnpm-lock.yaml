@@ -66,6 +66,9 @@ importers:
       svelte-check:
         specifier: ^4.1.1
         version: 4.1.1(svelte@5.16.1)(typescript@5.7.2)
+      svelte-popperjs:
+        specifier: ^1.3.2
+        version: 1.3.2(@popperjs/core@2.11.8)(svelte@5.16.1)
       typescript:
         specifier: ^5.7.2
         version: 5.7.2
@@ -318,6 +321,9 @@ packages:
 
   '@polka/url@1.0.0-next.28':
     resolution: {integrity: sha512-8LduaNlMZGwdZ6qWrKlfa+2M4gahzFkprZiAt2TF8uS0qQgBizKXpXURqvTJ4WtmupWxaLqjRb2UCTe72mu+Aw==}
+
+  '@popperjs/core@2.11.8':
+    resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
 
   '@rollup/rollup-android-arm-eabi@4.29.1':
     resolution: {integrity: sha512-ssKhA8RNltTZLpG6/QNkCSge+7mBQGUqJRisZ2MDQcEGaK93QESEgWK2iOpIDZ7k9zPVkG5AS3ksvD5ZWxmItw==}
@@ -1297,6 +1303,12 @@ packages:
       svelte:
         optional: true
 
+  svelte-popperjs@1.3.2:
+    resolution: {integrity: sha512-fwrErlkvngL876WXRnL3OLlfk/n9YkZwwLxuKRpZOYCJLt1zrwhoKTXS+/sRgDveD/zd6GQ35hV89EOip+NBGA==}
+    peerDependencies:
+      '@popperjs/core': '>=2'
+      svelte: '>=3'
+
   svelte@5.16.1:
     resolution: {integrity: sha512-FsA1OjAKMAFSDob6j/Tv2ZV9rY4SeqPd1WXQlQkFkePAozSHLp6tbkU9qa1xJ+uTRzMSM2Vx3USdsYZBXd3H3g==}
     engines: {node: '>=18'}
@@ -1635,6 +1647,8 @@ snapshots:
       fastq: 1.18.0
 
   '@polka/url@1.0.0-next.28': {}
+
+  '@popperjs/core@2.11.8': {}
 
   '@rollup/rollup-android-arm-eabi@4.29.1':
     optional: true
@@ -2585,6 +2599,11 @@ snapshots:
       postcss: 8.4.49
       postcss-scss: 4.0.9(postcss@8.4.49)
     optionalDependencies:
+      svelte: 5.16.1
+
+  svelte-popperjs@1.3.2(@popperjs/core@2.11.8)(svelte@5.16.1):
+    dependencies:
+      '@popperjs/core': 2.11.8
       svelte: 5.16.1
 
   svelte@5.16.1:
